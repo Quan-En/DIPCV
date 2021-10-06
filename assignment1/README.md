@@ -5,15 +5,3 @@ gui_viewer.exe可以直接download使用，主要透過上方的meaubar操作
 分成兩大步驟：
 (1)：Open image file:  File -> Open image
 (2)：Enhancement or Resize:  Operation -> log, gamma, negative...
-
-
-
-
-
-
-
-
- \
- \
- \
-附註：contributors裡面的陳冠中是我的舊名舊帳號
