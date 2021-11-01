@@ -9,6 +9,7 @@ Created on Mon Nov  1 14:45:47 2021
 import cv2
 import numpy as np
 from itertools import product
+from tqdm import tqdm
 
 class Conv_Filter(object):
     
@@ -212,7 +213,7 @@ class Conv_Filter(object):
         if verbose:
             print("TOTAL ITERATIONS = ", totalIterations)
 
-        for i in range(search_radius, height + search_radius):
+        for i in tqdm(range(search_radius, height + search_radius)):
             for j in range(search_radius, width + search_radius):
                 index_i = i - search_radius
                 index_j = j - search_radius
@@ -235,8 +236,8 @@ class Conv_Filter(object):
 
                         if verbose:
                             percentComplete = iterator*100/totalIterations
-                            if percentComplete // 5 == 0:
-                                print('% COMPLETE = ', percentComplete)
+                            # if percentComplete // 5 == 0:
+                                # print('% COMPLETE = ', percentComplete)
                             # if percentComplete % 5 == 0:
                                 # print('% COMPLETE = ', percentComplete)
 
@@ -244,7 +245,3 @@ class Conv_Filter(object):
                 outputImage[i, j] = pixelColor
         outputImage = outputImage[similarity_radius:similarity_radius+height, similarity_radius:similarity_radius+width]
         return outputImage
-
-
-if __name__ == '__main__':
-    pass
