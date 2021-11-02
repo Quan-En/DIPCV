@@ -67,6 +67,42 @@ class Conv_Filter(object):
         g = g1 * g2 * g3
         g = g / g.sum()
         return g
+
+    def gen_laplacian_kernel(self, win_size):
+        def ff(n1, n2):
+            c = 1
+            for i in range(n1, n2+1):
+                c *= i
+            return c
+        s = win_size - 1
+        temp = []
+        for i in range(0, win_size):
+            c = (ff(i+1, s) / ff(1, s-i)) * ((-1) ** i)
+            temp.append(c)
+        temp = np.array(temp)
+        p1 = np.zeros([win_size, win_size])
+        p1[int(win_size / 2), :] = temp
+        f = p1 + p1.T
+        return f
+
+    def laplacian_filter(self, image, win_size):
+        image = self.padding(image, win_size).astype(np.float64)
+        height, width = image.shape
+
+        radius = win_size // 2
+        dst_height = height - win_size + 1
+        dst_width = width - win_size + 1
+        
+        result = np.zeros((dst_height, dst_width))
+
+        kernel = self.gen_laplacian_kernel(win_size)
+
+        for i in range(radius, radius+dst_height):
+            for j in range(radius, radius+dst_width):
+                result[i-radius, j-radius] = (image[i-radius:i+radius+1, j-radius:j+radius+1] * kernel).sum()
+
+        result = self.re_scale(result).astype(np.uint8)
+        return result
     
     def blur(self, image, win_size, mode, **kwargs):
         
@@ -105,30 +141,80 @@ class Conv_Filter(object):
         result = self.re_scale(result).astype(np.uint8)
         return result
     
+    def gen_sobel_kernel(self, win_size, dir=1):   # 1為計算橫向，2為直向
+        s = int(win_size / 2) + 1
+        l = np.linspace(1, win_size, win_size)
+        x, y = np.meshgrid(l, l)
+        xy = np.concatenate([np.expand_dims(x, 0), np.expand_dims(y, 0)], axis=0)
+        if dir == 1:
+            dirs = np.array([1, 0])
+        else:
+            dirs = np.array([0, 1])
+
+        center = np.array([int(win_size/2), int(win_size/2)]).reshape(2, 1, 1) + 1
+        temp = (xy - center)
+        distence = np.abs(temp).sum(axis=0).reshape(1, win_size, win_size)
+        f = temp * dirs.reshape(2, 1, 1) / distence
+        f = f.sum(axis=0)
+        f[s-1, s-1] = np.array([0])
+        return f * (win_size - 1)
+    
+    def sobel_filter(self, image, win_size, dir=1):
+        image = self.padding(image, win_size).astype(np.float64)
+        height, width = image.shape
+        # height, width = image.shape[0], image.shape[1]
+        # dst image height and width
+        radius = win_size // 2
+        dst_height = height - win_size + 1
+        dst_width = width - win_size + 1
+        
+        result = np.zeros((dst_height, dst_width))
+
+        kernel = self.gen_sobel_kernel(win_size, dir)
+        for i in range(radius, radius+dst_height):
+            for j in range(radius, radius+dst_width):
+                result[i-radius, j-radius] = (image[i-radius:i+radius+1, j-radius:j+radius+1] * kernel).sum()
+
+        result = self.re_scale(result).astype(np.uint8)
+        return result
+
     def denoising(self, image, win_size, mode):
+        radius = win_size // 2
         image = self.padding(image, win_size)
         height, width = image.shape
         # height, width = image.shape[0], image.shape[1]
         # dst image height and width
         dst_height = height - win_size + 1
         dst_width = width - win_size + 1
-    
-        # im2col, turn the k_size*k_size pixels into a row and np.vstack all rows
-        image_array = np.zeros((dst_height * dst_width, win_size * win_size))
-        row = 0
-        for i, j in product(range(dst_height), range(dst_width)):
-            window = np.ravel(image[i : i + win_size, j : j + win_size])
-            image_array[row, :] = window
-            row += 1
-        
-        if mode.lower() == 'max':
-            return np.max(image_array, axis=1).reshape(dst_height, dst_width).astype(np.uint8)
-        elif mode.lower() == 'median':
-            return np.median(image_array, axis=1).reshape(dst_height, dst_width).astype(np.uint8)
-        elif mode.lower() == 'min':
-            return np.min(image_array, axis=1).reshape(dst_height, dst_width).astype(np.uint8)
 
-    def bilateral_kernel(self, sub_image, win_size, sigma_c, sigma_s, without_smooth=False):
+        result = np.zeros((dst_height, dst_width))
+
+        for i in range(radius, radius+dst_height):
+            for j in range(radius, radius+dst_width):
+                if mode.lower() == 'max':
+                    result[i-radius, j-radius] = np.max(image[i-radius:i+radius+1, j-radius:j+radius+1])
+                elif mode.lower() == 'median':
+                    result[i-radius, j-radius] = np.median(image[i-radius:i+radius+1, j-radius:j+radius+1])
+                else:
+                    result[i-radius, j-radius] = np.min(image[i-radius:i+radius+1, j-radius:j+radius+1])
+
+        return result.astype(np.uint8)
+        # # im2col, turn the k_size*k_size pixels into a row and np.vstack all rows
+        # image_array = np.zeros((dst_height * dst_width, win_size * win_size))
+        # row = 0
+        # for i, j in product(range(dst_height), range(dst_width)):
+        #     window = np.ravel(image[i : i + win_size, j : j + win_size])
+        #     image_array[row, :] = window
+        #     row += 1
+        
+        # if mode.lower() == 'max':
+        #     return np.max(image_array, axis=1).reshape(dst_height, dst_width).astype(np.uint8)
+        # elif mode.lower() == 'median':
+        #     return np.median(image_array, axis=1).reshape(dst_height, dst_width).astype(np.uint8)
+        # elif mode.lower() == 'min':
+        #     return np.min(image_array, axis=1).reshape(dst_height, dst_width).astype(np.uint8)
+
+    def gen_bilateral_kernel(self, sub_image, win_size, sigma_c, sigma_s, without_smooth=False):
         center = win_size // 2
         x, y = np.mgrid[0 - center : win_size - center, 0 - center : win_size - center]
         sigma_c_square = np.square(sigma_c)
@@ -159,7 +245,7 @@ class Conv_Filter(object):
         result = np.zeros((dst_height, dst_width))
         for i, j in product(range(dst_height), range(dst_width)):
             sub_image = image[i : i + win_size, j : j + win_size].astype(np.float64)
-            kernel = self.bilateral_kernel(sub_image, win_size, sigma_c, sigma_s, without_smooth)
+            kernel = self.gen_bilateral_kernel(sub_image, win_size, sigma_c, sigma_s, without_smooth)
             result[i,j] = (sub_image * kernel).sum()
             
         result = self.re_scale(result).astype(np.uint8)
