@@ -95,7 +95,43 @@ class MainApplication(Tk, Transform, Conv_Filter, Hist_Enhencement):
         FilterMenu.add_command(label="Non local means(NLM)", command=self.nl_means)
         
         self.configure(menu=menubar)
-    
+
+    def nl_means(self):
+        new_wins = Toplevel(self)
+        new_wins.title("NLM")
+        new_wins.geometry("240x180")
+        
+        win_size1_label = Label(new_wins, text ="kernel size: ")
+        win_size1_label.grid(row=0, column=0)
+        
+        size1_entry = Entry(new_wins, width=5)
+        size1_entry.grid(row=0, column=1)
+        
+        win_size2_label = Label(new_wins, text ="search size: ")
+        win_size2_label.grid(row=1, column=0)
+        
+        size2_entry = Entry(new_wins, width=5)
+        size2_entry.grid(row=1, column=1)
+
+        h_label = Label(new_wins, text ="h: ")
+        h_label.grid(row=2, column=0)
+        
+        h_entry = Entry(new_wins, width=5)
+        h_entry.grid(row=2, column=1)
+        
+        def get_parm():
+            g_size1 = int(size1_entry.get())
+            g_size2 = int(size2_entry.get())
+            g_h = float(h_entry.get())
+            self.image_array.set(self.nonLocalMeans_filter(self.image_array.get(), g_size1, g_size2, g_h))
+            self.new_img_canvas = ImageTk.PhotoImage(fromarray(self.image_array.get()))
+            self.canvas.itemconfigure(self.image_on_canvas, image=self.new_img_canvas)
+            new_wins.destroy()
+            
+        get_btn = tk.Button(new_wins, text="Ok", command=get_parm)
+        get_btn.grid(row=4,column=0)
+        
+
     def global_hist_match(self):
         file_selected = filedialog.askopenfilename()
         file_selected = file_selected.lower()
@@ -109,8 +145,7 @@ class MainApplication(Tk, Transform, Conv_Filter, Hist_Enhencement):
         self.new_img_canvas = ImageTk.PhotoImage(fromarray(self.image_array.get()))
         self.canvas.itemconfigure(self.image_on_canvas, image=self.new_img_canvas)
     
-    def nl_means(self):
-        pass
+
     
     def bilateral_denoise(self):
         new_wins = Toplevel(self)
