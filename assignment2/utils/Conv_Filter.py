@@ -214,28 +214,27 @@ class Conv_Filter(object):
         # elif mode.lower() == 'min':
         #     return np.min(image_array, axis=1).reshape(dst_height, dst_width).astype(np.uint8)
 
-    def gen_bilateral_kernel(self, sub_image, win_size, sigma_c, sigma_s, without_smooth=False):
+    def gen_bilateral_kernel(self, sub_image, win_size, sigma_c, sigma_s, with_smooth=True):
         center = win_size // 2
         x, y = np.mgrid[0 - center : win_size - center, 0 - center : win_size - center]
         sigma_c_square = np.square(sigma_c)
         sigma_s_square = np.square(sigma_s)
 
-        if not without_smooth:
-            gc1 = -1 / (np.pi * np.square(sigma_c_square))
-            gc2 = 1 - (np.square(x) + np.square(y)) / (2 * sigma_c_square)
-            gc3 = np.exp(gc2 - 1)        
-            gc = gc1 * gc2 * gc3
+        if with_smooth:
+            gc1 = 1 / (np.pi * np.square(sigma_c_square))
+            gc2 = (np.square(x) + np.square(y)) / (2 * sigma_c_square)
+            gc = gc1 * gc2
         else:
             gc = 1
         
-        gs = np.exp(-np.square(sub_image - sub_image[center, center]) / (2 * sigma_s_square))
+        gs = np.exp(-np.abs(sub_image - sub_image[center, center]) / (2 * sigma_s_square))
         
         g = gc * gs
         g = g / g.sum()
         
         return g
     
-    def bilateral_filter(self, image, win_size, sigma_c, sigma_s, without_smooth=False):
+    def bilateral_filter(self, image, win_size, sigma_c=1, sigma_s=1, with_smooth=True):
         image = self.padding(image, win_size)
         height, width = image.shape
         
@@ -245,7 +244,7 @@ class Conv_Filter(object):
         result = np.zeros((dst_height, dst_width))
         for i, j in product(range(dst_height), range(dst_width)):
             sub_image = image[i : i + win_size, j : j + win_size].astype(np.float64)
-            kernel = self.gen_bilateral_kernel(sub_image, win_size, sigma_c, sigma_s, without_smooth)
+            kernel = self.gen_bilateral_kernel(sub_image, win_size, sigma_c, sigma_s, with_smooth)
             result[i,j] = (sub_image * kernel).sum()
             
         result = self.re_scale(result).astype(np.uint8)

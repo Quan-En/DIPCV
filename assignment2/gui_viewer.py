@@ -44,6 +44,7 @@ class MainApplication(Tk, Transform, Conv_Filter, Hist_Enhencement):
         self.resize_method = IntVar()
         self.sobel_direction = IntVar()
         self.special_kernel = IntVar()
+        self.use_smooth = IntVar()
         
         # canvas
         self.canvas = Canvas(self, width=1024, height=1024)
@@ -77,7 +78,7 @@ class MainApplication(Tk, Transform, Conv_Filter, Hist_Enhencement):
         
         FilterMenu.add_command(label="Global Hist", command=self.global_hist_eq)
         FilterMenu.add_command(label="Local Hist", command=self.local_hist_eq)
-        FilterMenu.add_command(label="Hist match")
+        FilterMenu.add_command(label="Hist match", command=self.global_hist_match)
         FilterMenu.add_separator()
         FilterMenu.add_command(label="Gaussian", command=self.gaussian_blur)
         FilterMenu.add_command(label="Averaging", command=self.average_blur)
@@ -87,22 +88,75 @@ class MainApplication(Tk, Transform, Conv_Filter, Hist_Enhencement):
         FilterMenu.add_command(label="Laplacian", command=self.laplacian_edge_detect)
         FilterMenu.add_command(label="Sobel", command=self.sobel_edge_detect)
         FilterMenu.add_separator()
-        FilterMenu.add_command(label="Median filter", command=self.median_denoise)
-        FilterMenu.add_command(label="Bilateral filter")
-        FilterMenu.add_command(label="Special filter", command=self.special_deal)
+        FilterMenu.add_command(label="Median", command=self.median_denoise)
+        FilterMenu.add_command(label="Bilateral", command=self.bilateral_denoise)
+        FilterMenu.add_command(label="Special", command=self.special_deal)
         FilterMenu.add_separator()
-        FilterMenu.add_command(label="Non local means(NLM)")
+        FilterMenu.add_command(label="Non local means(NLM)", command=self.nl_means)
         
         self.configure(menu=menubar)
     
     def global_hist_match(self):
-        pass
+        file_selected = filedialog.askopenfilename()
+        file_selected = file_selected.lower()
+        
+        if 'bmp' in file_selected:
+            temp = cv2.imread(file_selected, cv2.IMREAD_GRAYSCALE)
+        elif 'raw' in file_selected:
+            temp = np.fromfile(file_selected, dtype=np.uint8).reshape(512, 512)
+            
+        self.image_array.set(self.hist_match(self.image_array.get(), temp))
+        self.new_img_canvas = ImageTk.PhotoImage(fromarray(self.image_array.get()))
+        self.canvas.itemconfigure(self.image_on_canvas, image=self.new_img_canvas)
     
     def nl_means(self):
         pass
     
     def bilateral_denoise(self):
-        pass
+        new_wins = Toplevel(self)
+        new_wins.title("Bilateral denoise")
+        new_wins.geometry("240x180")
+        
+        win_size_label = Label(new_wins, text ="kernel size: ")
+        win_size_label.grid(row=0, column=0)
+        
+        size_entry = Entry(new_wins, width=5)
+        size_entry.grid(row=0, column=1)
+        
+        sigma_c_label = Label(new_wins, text ="Sigma(Distance): ")
+        sigma_c_label.grid(row=1, column=0)
+        
+        sigma_c_entry = Entry(new_wins, width=5)
+        sigma_c_entry.grid(row=1, column=1)
+        
+        sigma_s_label = Label(new_wins, text ="Sigma(Intensities): ")
+        sigma_s_label.grid(row=2, column=0)
+        
+        sigma_s_entry = Entry(new_wins, width=5)
+        sigma_s_entry.grid(row=2, column=1)
+        
+        rdio_1 = tk.Radiobutton(new_wins, text='yes', variable=self.use_smooth, value=1)
+        rdio_2 = tk.Radiobutton(new_wins, text='no', variable=self.use_smooth, value=0)
+        
+        rdio_1.grid(row=3,column=0)
+        rdio_2.grid(row=3,column=1)
+        
+        def get_parm():
+            g_size = int(size_entry.get())
+            g_use_smooth = int(self.use_smooth.get())
+            if g_use_smooth:
+                g_sigma_c = float(sigma_c_entry.get())
+            else:
+                g_sigma_c = 1
+            g_sigma_s = float(sigma_s_entry.get())
+            
+            self.image_array.set(self.bilateral_filter(self.image_array.get(), g_size, g_sigma_c, g_sigma_s, g_use_smooth))
+            self.new_img_canvas = ImageTk.PhotoImage(fromarray(self.image_array.get()))
+            self.canvas.itemconfigure(self.image_on_canvas, image=self.new_img_canvas)
+            new_wins.destroy()
+            
+        get_btn = tk.Button(new_wins, text="Ok", command=get_parm)
+        get_btn.grid(row=4,column=0)
     
     def median_denoise(self):
         new_wins = Toplevel(self)
