@@ -1,8 +1,8 @@
 # DIPCV
 
 ## Assignment1
-Image transformation: log, gamma, negative
-Resize: bilinear, nearest neighbor
+- Image transformation: log, gamma, negative
+- Resize: bilinear, nearest neighbor
 
 ## Assignment2
 Image convolution: 
