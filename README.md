@@ -1,4 +1,4 @@
-# DIPCV
+# DIPCV (Digital Image Processing and Computer Vision)
 
 ## Assignment1
 Implement : 
