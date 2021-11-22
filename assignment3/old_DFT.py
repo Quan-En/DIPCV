@@ -15,10 +15,10 @@ def DFT(image:np.array):
     weighted = np.exp(-array([1j]) * 2 * pi * index_array)
     weighted_array_list = blockshaped(weighted, nrows, ncols)
     result = list(map(lambda x: np.sum(x*image), weighted_array_list))
-    return array(result).reshape(nrows, ncols)
+    return array(result, dtype=np.complex_).reshape(nrows, ncols)
 
 
-def IDFT(freq_map):
+def IDFT(freq_map:np.array):
     nrows, ncols = freq_map.shape[0], freq_map.shape[1]
     freq_map = freq_map / (nrows*ncols)
     all_row_index, all_col_index = np.indices((nrows, ncols))
@@ -29,4 +29,4 @@ def IDFT(freq_map):
     weighted = np.exp(array([1j]) * 2 * pi * index_array)
     weighted_array_list = blockshaped(weighted, nrows, ncols)
     result = list(map(lambda x: np.sum(x*freq_map), weighted_array_list))
-    return array(result).reshape(nrows, ncols)
+    return array(result, dtype=np.complex_).reshape(nrows, ncols)

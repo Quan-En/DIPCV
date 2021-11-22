@@ -14,6 +14,8 @@ def freq_padding(image:np.array):
     output[:nrows,:ncols] = image
     return output
 
+# https://stackoverflow.com/questions/11105375/how-to-split-a-matrix-into-4-blocks-using-numpy
+# https://stackoverflow.com/questions/16856788/slice-2d-array-into-smaller-2d-arrays
 def blockshaped(arr, nrows, ncols):
     """
     Return an array of shape (n, nrows, ncols) where
@@ -28,3 +30,30 @@ def blockshaped(arr, nrows, ncols):
     return (arr.reshape(h//nrows, nrows, -1, ncols)
             .swapaxes(1,2)
             .reshape(-1, nrows, ncols))
+
+
+def img_shift(x):
+    nrows, ncols = x.shape[0], x.shape[1]
+    row_center_index = int(nrows / 2)
+    col_center_index = int(ncols / 2)
+
+    block_array_list = [
+        x[:row_center_index,:col_center_index],
+        x[:row_center_index,col_center_index:],
+        x[row_center_index:,:col_center_index],
+        x[row_center_index:,col_center_index:],
+        ]
+    block_array_list = list(map(lambda x: np.flip(x, (0,1)), block_array_list))
+
+    shifted_result = np.block([block_array_list[:2], block_array_list[2:]])
+    return shifted_result
+
+
+def create_image_radius_index(image):
+    nrows, ncols = image.shape[0], image.shape[1]
+    all_row_index, all_col_index = np.indices((nrows, ncols))
+    row_center_index = int(nrows / 2)
+    col_center_index = int(ncols / 2)
+    all_row_index = all_row_index - row_center_index
+    all_col_index = all_col_index - col_center_index
+    return all_row_index, all_col_index
