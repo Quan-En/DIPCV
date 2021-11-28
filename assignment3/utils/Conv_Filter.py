@@ -5,8 +5,6 @@ Created on Mon Nov  1 14:45:47 2021
 @author: Taner
 """
 
-
-import cv2
 import numpy as np
 from itertools import product
 from tqdm import tqdm
@@ -43,10 +41,9 @@ class Conv_Filter(object):
     # https://github.com/TheAlgorithms/Python/blob/master/digital_image_processing/filters/gaussian_filter.py
     def gen_gaussian_kernel(self, win_size, sigma):
         center = win_size // 2
-        x, y = np.mgrid[0 - center : win_size - center, 0 - center : win_size - center]
-        sigma_square = np.square(sigma)
-        g1 = 1 / (2 * np.pi * sigma_square)
-        g2 = np.exp(-(np.square(x) + np.square(y)) / (2 * sigma_square))
+        x, y = np.mgrid[0 - center : win_size - center, 0 - center : win_size - center] 
+        g1 = 1 / (np.sqrt(2 * np.pi) * sigma)
+        g2 = np.exp(-(np.square(x) + np.square(y)) / (2 * np.square(sigma)))
         g = g1 * g2
         g = g / g.sum()
         return g
