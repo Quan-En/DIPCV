@@ -1,5 +1,6 @@
 # Reference (1): J. Makhoul (1980)
 # Reference (2): https://github.com/zafarrafii/Zaf-Python
+# Reference (3): https://dsp.stackexchange.com/questions/2807/fast-cosine-transform-via-fft
 
 import numpy as np
 
