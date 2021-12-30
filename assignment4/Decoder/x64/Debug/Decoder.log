@@ -1,0 +1,41 @@
+﻿  main.cpp
+  Decoder.cpp
+C:\Users\Taner\Documents\GitHub\my_jpg_com\Decoder\src\Decoder.cpp(618,61): warning C4267: '正在初始化': 將 'size_t' 轉換為 'int'，資料可能遺失
+  HuffmanTree.cpp
+  Image.cpp
+C:\Users\Taner\Documents\GitHub\my_jpg_com\Decoder\src\Image.cpp(28,73): warning C4267: '正在初始化': 將 'size_t' 轉換為 'int'，資料可能遺失
+C:\Users\Taner\Documents\GitHub\my_jpg_com\Decoder\src\Image.cpp(29,78): warning C4267: '正在初始化': 將 'size_t' 轉換為 'int'，資料可能遺失
+  MCU.cpp
+C:\Users\Taner\Documents\GitHub\my_jpg_com\Decoder\src\MCU.cpp(99,38): warning C4244: '正在初始化': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
+C:\Users\Taner\Documents\GitHub\my_jpg_com\Decoder\src\MCU.cpp(100,38): warning C4244: '正在初始化': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
+C:\Users\Taner\Documents\GitHub\my_jpg_com\Decoder\src\MCU.cpp(102,109): warning C4244: '+=': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
+C:\Users\Taner\Documents\GitHub\my_jpg_com\Decoder\src\MCU.cpp(107,50): warning C4244: '=': 將 'double' 轉換為 '_Ty'，由於類型不同，可能導致資料遺失
+          with
+          [
+              _Ty=float
+          ]
+C:\Users\Taner\Documents\GitHub\my_jpg_com\Decoder\src\MCU.cpp(125,77): warning C4244: '=': 將 'long double' 轉換為 '_Ty'，由於類型不同，可能導致資料遺失
+          with
+          [
+              _Ty=int
+          ]
+C:\Users\Taner\Documents\GitHub\my_jpg_com\Decoder\src\MCU.cpp(141,25): warning C4244: '正在初始化': 將 '_Ty' 轉換為 'float'，由於類型不同，可能導致資料遺失
+          with
+          [
+              _Ty=int
+          ]
+C:\Users\Taner\Documents\GitHub\my_jpg_com\Decoder\src\MCU.cpp(142,26): warning C4244: '正在初始化': 將 '_Ty' 轉換為 'float'，由於類型不同，可能導致資料遺失
+          with
+          [
+              _Ty=int
+          ]
+C:\Users\Taner\Documents\GitHub\my_jpg_com\Decoder\src\MCU.cpp(143,26): warning C4244: '正在初始化': 將 '_Ty' 轉換為 'float'，由於類型不同，可能導致資料遺失
+          with
+          [
+              _Ty=int
+          ]
+  Transform.cpp
+C:\Users\Taner\Documents\GitHub\my_jpg_com\Decoder\src\Transform.cpp(71,43): warning C4244: 'return': 將 'double' 轉換為 'const kpeg::Int16'，由於類型不同，可能導致資料遺失
+  Utility.cpp
+  正在產生程式碼...
+  Decoder.vcxproj -> C:\Users\Taner\Documents\GitHub\my_jpg_com\Decoder\x64\Debug\Decoder.exe

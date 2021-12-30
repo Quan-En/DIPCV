@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "17e90979-eccc-455f-9037-d05a7c7f522e": {
+      "ProjectGuid": "17e90979-eccc-455f-9037-d05a7c7f522e",
+      "DisplayName": "Decoder",
+      "ColorIndex": 0
+    }
+  },
+  "NextColorIndex": 1
+}

@@ -1,0 +1,4 @@
+C:\Users\Taner\Documents\GitHub\my_jpec\Project\x64\Debug\Project.exe
+C:\Users\Taner\Documents\GitHub\my_jpg_com\Project\x64\Debug\Encoder.exe
+C:\Users\Taner\Documents\GitHub\my_jpg_com\Encoder\x64\Debug\Encoder.exe
+C:\Users\Taner\Documents\GitHub\DIPCV\assignment4\Encoder\x64\Debug\Encoder.exe
