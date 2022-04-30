@@ -1,6 +1,7 @@
 # DIPCV (Digital Image Processing and Computer Vision)
 In this website, the related methods of Image Processing and Computer Vision are implemented using Python, and some methods are packaged in a GUI.
 Mainly can be divided into assignment1 to assignment5 and final project.
+Written reports are `result.pdf` in each folder.
 A brief description is listed below: 
 ## Assignment1
 Implement : 
